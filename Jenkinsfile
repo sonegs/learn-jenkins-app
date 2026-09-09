@@ -20,16 +20,14 @@ pipeline {
 
                     rm -rf node_modules
 
-                    if ! npm ci; then
-                        echo "===== NPM CI FAILED ====="
-                        echo "===== CACHE ====="
-                        npm config get cache || true
+                    npm ci    EXIT_CODE=$?
 
-                        echo "===== LOGS ====="
-                        find /home/node/.npm -type f -maxdepth 3 -print -exec cat {} \\; || true
+    echo "===== EXIT CODE: $EXIT_CODE ====="
+    echo "===== NPM LOG ====="
 
-                        exit 1
-                    fi
+    cat /home/node/.npm/_logs/*-debug-0.log || true
+
+    exit $EXIT_CODE
 
                     npm run build
                 '''
