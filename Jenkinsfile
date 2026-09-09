@@ -12,23 +12,19 @@ pipeline {
 
             steps {
                 sh '''
-                    echo "===== LOGS demostrando que hay cambios ====="
-                    node --version
+    echo "===== DNS ====="
+    cat /etc/resolv.conf
 
-                    echo "npm:"
-                    npm --version
+    echo "===== REGISTRY DNS ====="
+    getent hosts registry.npmjs.org || true
 
-                    rm -rf node_modules
+    echo "===== NPM PING ====="
+    npm ping || true
 
-                    npm ci    EXIT_CODE=$?
+    echo "===== CURL ====="
+    curl -I --max-time 10 https://registry.npmjs.org/ || true
 
-    echo "===== EXIT CODE: $EXIT_CODE ====="
-    echo "===== NPM LOG ====="
-
-    cat /home/node/.npm/_logs/*-debug-0.log || true
-
-    exit $EXIT_CODE
-
+    npm ci
                     npm run build
                 '''
             }
