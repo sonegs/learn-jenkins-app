@@ -31,9 +31,15 @@ pipeline {
                 sh '''
                     echo "Test stage"
                     test -f build/index.html && echo "Existe" || echo "No existe"
-                    npm test                    
+                    npm test                 
                 '''
             }
+        }
+    }
+
+    post {
+        always {
+            junit 'test-results/junit.xml'
         }
     }
 }
