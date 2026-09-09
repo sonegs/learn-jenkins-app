@@ -5,30 +5,33 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'node:18'
                     reuseNode true
                 }
             }
+
             steps {
                 sh '''
-                    set -e
+                    echo "Node:"
+                    node --version
+
+                    echo "npm:"
+                    npm --version
 
                     rm -rf node_modules
 
-                    ls -la
-                    node --version
-                    npm --version
+                    if ! npm ci; then
+                        echo "===== NPM CI FAILED ====="
+                        echo "===== CACHE ====="
+                        npm config get cache || true
 
-                    npm ci || {
-                        echo "===== NPM DEBUG LOG ====="
-                        ls -la /home/node/.npm/_logs || true
-                        cat /home/node/.npm/_logs/* || true
+                        echo "===== LOGS ====="
+                        find /home/node/.npm -type f -maxdepth 3 -print -exec cat {} \\; || true
+
                         exit 1
-                    }
+                    fi
 
                     npm run build
-
-                    ls -la
                 '''
             }
         }
