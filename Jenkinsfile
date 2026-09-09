@@ -30,7 +30,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Test stage"
-                    test -f build/archivo.txt && echo "Existe" || echo "No existe"
+                    test -f build/index.html
                 '''
             }
         }
