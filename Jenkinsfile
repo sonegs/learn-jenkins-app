@@ -5,14 +5,14 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'node:18'
+                    image 'node:18-alpine'
                     reuseNode true
                 }
             }
 
             steps {
                 sh '''
-                    echo "Node:"
+                    echo "===== LOGS demostrando que hay cambios ====="
                     node --version
 
                     echo "npm:"
