@@ -90,19 +90,26 @@ pipeline {
 
             steps {
                 sh '''
-echo "--- Comprobaciones ---"
-                node --version
-npm --version
-npm config get registry
-npm ping
-curl -I https://registry.npmjs.org/
-
                     npm install netlify-cli@20.1.1 node-jq
                     node_modules/.bin/netlify --version
                     echo "Deploying to staging. Site ID: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
                     CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
+
+                    CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
+
+    echo "================================="
+    echo "STAGING URL: $CI_ENVIRONMENT_URL"
+    echo "================================="
+
+    curl -L "$CI_ENVIRONMENT_URL" -o staging.html
+
+    echo "HTML recibido:"
+    head -30 staging.html
+
+
+
                     npx playwright test  --reporter=html
                 '''
             }
