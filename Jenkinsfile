@@ -99,17 +99,6 @@ pipeline {
 
                     CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
 
-    echo "================================="
-    echo "STAGING URL: $CI_ENVIRONMENT_URL"
-    echo "================================="
-
-    curl -L "$CI_ENVIRONMENT_URL" -o staging.html
-
-    echo "HTML recibido:"
-    head -30 staging.html
-
-
-
                     npx playwright test  --reporter=html
                 '''
             }
