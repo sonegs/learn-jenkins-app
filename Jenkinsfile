@@ -103,7 +103,7 @@ pipeline {
                         --dir=build \
                         --json > deploy-output.json
 
-                    export CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy-output.json)
+                    export CI_ENVIRONMENT_URL=$(jq -r '.deploy_url' deploy-output.json)
                     npx playwright test --reporter=html
                 '''
             }
