@@ -88,49 +88,63 @@ pipeline {
         stage('Deploy staging') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
 
             steps {
                 sh '''
-                    set -e
 
-                    echo "=== Environment ==="
-                    node --version
-                    npm --version
-                    uname -m
-                    node -p "process.arch"
-
-                    echo "=== Clean dependencies ==="
-                    rm -rf node_modules
-
-                    echo "=== Install Netlify CLI ==="
-                    npm install netlify-cli@20.1.1 node-jq
-
-                    echo "=== Netlify version ==="
-                    node_modules/.bin/netlify --version
-
+                    netlify --version
                     echo "=== Deploying to staging ==="
                     echo "Site ID: $NETLIFY_SITE_ID"
-
-                    node_modules/.bin/netlify status
-
-                    node_modules/.bin/netlify deploy \
+                    netlify status
+                    netlify deploy \
                         --dir=build \
                         --json > deploy-output.json
 
-                    echo "=== Staging deploy output ==="
-                    cat deploy-output.json
-
-                    export CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
-
-                    echo "=== STAGING URL ==="
-                    echo "$CI_ENVIRONMENT_URL"
-
-                    echo "=== Staging E2E tests ==="
+                    CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
                     npx playwright test --reporter=html
+
+
+
+                    // set -e
+
+                    // echo "=== Environment ==="
+                    // node --version
+                    // npm --version
+                    // uname -m
+                    // node -p "process.arch"
+
+                    // echo "=== Clean dependencies ==="
+                    // rm -rf node_modules
+
+                    // echo "=== Install Netlify CLI ==="
+                    // npm install netlify-cli@20.1.1 node-jq
+
+                    // echo "=== Netlify version ==="
+                    // node_modules/.bin/netlify --version
+
+                    // echo "=== Deploying to staging ==="
+                    // echo "Site ID: $NETLIFY_SITE_ID"
+
+                    // node_modules/.bin/netlify status
+
+                    // node_modules/.bin/netlify deploy \
+                    //     --dir=build \
+                    //     --json > deploy-output.json
+
+                    // echo "=== Staging deploy output ==="
+                    // cat deploy-output.json
+
+                    // export CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
+
+                    // echo "=== STAGING URL ==="
+                    // echo "$CI_ENVIRONMENT_URL"
+
+                    // echo "=== Staging E2E tests ==="
+                    // npx playwright test --reporter=html
                 '''
             }
 
