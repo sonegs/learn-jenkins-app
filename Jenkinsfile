@@ -8,7 +8,7 @@ pipeline {
     }
 
     stages {
-
+/*
         stage('Docker'){
             steps {
                 sh '''
@@ -16,7 +16,7 @@ pipeline {
                 '''
             }
         }
-
+*/
         stage('Build') {
             agent {
                 docker {
